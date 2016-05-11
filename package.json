@@ -1,0 +1,19 @@
+{
+  "name": "marauders_map",
+  "version": "0.0.0",
+  "description": "I solemnly swear that I am up for food",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chm052/marauders_map.git"
+  },
+  "author": "marauders map team",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chm052/marauders_map/issues"
+  },
+  "homepage": "https://github.com/chm052/marauders_map#readme"
+}
