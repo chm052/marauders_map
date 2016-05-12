@@ -44,7 +44,8 @@ func GetNearbyFoodTrucks(w http.ResponseWriter, r *http.Request) {
   }
 
   trucks := []Truck{}
-  err := db.Select(&trucks, "SELECT id, name, owner_id, lat, lng, url FROM FoodTrucks WHERE ST_DWithin(geom,  ST_GeomFromText('POINT($1 $2)', 4326),1000,false)", longitude,latitude)
+  // TODO needs id, name etc?
+  err := db.Select(&trucks, "SELECT id, name, lat, lng, url FROM FoodTrucks WHERE ST_DWithin(geom,  ST_GeomFromText('POINT($1 $2)', 4326),1000,false)", longitude,latitude)
   fmt.Println(trucks)
   if (err != nil){
     fmt.Println(err)
@@ -76,19 +77,18 @@ func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
 
   // surely there's a better way to do this
   name := queryParameters.Get("name")
-  ownerid, err1 := strconv.Atoi(queryParameters.Get("ownerid"))
   latitude, err2 := strconv.ParseFloat(queryParameters.Get("lat"), 64)
   longitude, err3 := strconv.ParseFloat(queryParameters.Get("lon"), 64)
   url := queryParameters.Get("url")
 
-  if err1 != nil || err2 != nil || err3 != nil {
-    w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s %s", err1, err2, err3)))
+  if err2 != nil || err3 != nil {
+    w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s", err2, err3)))
     return
   }
-  addTruck := `INSERT INTO foodtrucks (id, name, owner_id, lat, lng, url, geom) VALUES ($1, $2, $3, $4, $5, $6,ST_GeomFromText('POINT($6 $5)', 4326))`
+  addTruck := `INSERT INTO foodtrucks (id, name, lat, lng, url, geom) VALUES ($1, $2, $3, $4, $5, ST_GeomFromText('POINT($4 $3)', 4326))`
   var truckId = len(allTrucks)+1
   tx, err := db.Begin()
-  _, err = tx.Exec(addTruck, truckId, name, int(ownerid), latitude, longitude, url)
+  _, err = tx.Exec(addTruck, truckId, name, latitude, longitude, url)
   err = tx.Commit()
 
   if (err != nil){
