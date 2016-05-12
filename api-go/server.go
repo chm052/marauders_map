@@ -25,13 +25,13 @@ func main() {
   mx.HandleFunc("/api/trucks/location/{id}", GetFoodTruckLocation).Methods("GET")
   mx.HandleFunc("/api/trucks/location/{id}", PostFoodTruckLocation).Methods("POST")
   mx.HandleFunc("/api/trucks/location", GetFoodTrucks).Methods("GET")
-  mx.HandleFunc("/api/trucksdb", GetTrucksFromDb)
+  mx.HandleFunc("/api/trucks/test", GetTestFoodTrucks).Methods("GET")
 
   fmt.Printf("Serving on port %i", 9001)
   http.ListenAndServe(":9001", mx)
 }
 
-func GetTrucksFromDb(w http.ResponseWriter, r *http.Request) {
+func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
   trucks := []Truck{}
   err := db.Select(&trucks, "SELECT id, name, lat, lng FROM FoodTrucks")
   fmt.Println(trucks)
@@ -106,7 +106,7 @@ func PostFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
                               foodTruckId, latitude, longitude)))
 }
 
-func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
+func GetTestFoodTrucks(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Content-Type", "application/json; charset=utf=8")
   a, _:= json.Marshal(allTrucks)
   w.Write(a)
