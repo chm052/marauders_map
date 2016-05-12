@@ -1,38 +1,94 @@
 package com.maraudersmap.mattbennett.maraudersmapfto;
 
 import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
+
+import java.nio.channels.NotYetConnectedException;
 import java.util.List;
 
 /**
  * Created by matt.bennett on 12/05/2016.
  */
-public class LocationFinder {
+public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
     private LocationManager locationManager;
-    private Context context;
+    private GoogleApiClient apiClient;
+    private Activity context;
+    private boolean connected = false;
 
-    public LocationFinder(Context context) {
+    final int REQUEST_LOCATION_CODE = 420;
+
+    public LocationFinder(Activity context) {
         this.context = context;
-        locationManager = (LocationManager) context.getSystemService(Context.LOCATION_SERVICE);
+
+        // Create an instance of GoogleAPIClient.
+        Log.d("PostActivity", "Instatiating google api client");
+        if (this.apiClient == null) {
+            this.apiClient = new GoogleApiClient.Builder(context)
+                    .addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this)
+                    .addApi(LocationServices.API)
+                    .build();
+        }
     }
 
     public Location myLocation() throws Exception {
-        List<String> providers = locationManager.getProviders(false);
+        if(connected) {
+            Location currentLocation = null;
 
-        if(providers.size() > 0) {
-            Log.d("tag!", String.format("here's the locations %s", providers.toString()));
-
-            if (ContextCompat.checkSelfPermission(context, Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-                return locationManager.getLastKnownLocation(providers.get(0));
+            if (context.checkSelfPermission(Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+               requestPermission(Manifest.permission.ACCESS_FINE_LOCATION);
             }
-            throw new Exception("I don't have the permissions!");
+
+            while (currentLocation == null) {
+                currentLocation = LocationServices.FusedLocationApi.getLastLocation(this.apiClient);
+            }
+            return currentLocation;
         }
-        throw new Exception("could not find providers");
+
+        //TODO: This should throw an error and you should wait on a connection
+        return null;
+    }
+
+    public void connect() {
+        this.apiClient.connect();
+    }
+
+    public void disconnect() {
+        this.apiClient.disconnect();
+    }
+
+    private void requestPermission(String... permission) {
+        context.requestPermissions(permission, REQUEST_LOCATION_CODE);
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        ClassLogger.debug(this, "Have connected");
+        connected = true;
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        ClassLogger.debug(this, "Have suspended connected");
+        connected = false;
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+        ClassLogger.debug(this, "Everything has gone to shit :(");
+        connected = false;
     }
 }
