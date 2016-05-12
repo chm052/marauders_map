@@ -8,9 +8,9 @@ import (
   "strconv"
 )
 
-var truck1  = Truck{1, "Greek Food Truck", -41.292489, 174.778656, true}
-var truck2 = Truck{2, "Beat Kitchen", -41.287022, 174.778667, false}
-var truck3 = Truck{3, "Nanny's Food Truck", -41.290425, 174.779272, true}
+var truck1  = Truck{"1", "Greek Food Truck", -41.292489, 174.778656, true}
+var truck2 = Truck{"2", "Beat Kitchen", -41.287022, 174.778667, false}
+var truck3 = Truck{"3", "Nanny's Food Truck", -41.290425, 174.779272, true}
 var allTrucks = []Truck{truck1, truck2, truck3}
 var db = initDb()
 
@@ -95,16 +95,16 @@ func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
     fmt.Println(err)
     return
   }
-  // newTruck := Truck{FoodTruckId: len(allTrucks)+1,
-  //                  Name: name,
-  //                  OwnerId: int(ownerid),
-  //                  Latitude: latitude,
-  //                  Longitude: longitude,
-  //                  Url: url}
-  //
-  // allTrucks = append(allTrucks, newTruck)
-  // a, _:= json.Marshal(allTrucks)
-  // w.Write(a)
+
+  // hack
+  newTruck := Truck{FoodTruckId: string(len(allTrucks)+1),
+                   Name: name,
+                   Latitude: latitude,
+                   Longitude: longitude,
+                   IsOpen: false}
+  allTrucks = append(allTrucks, newTruck)
+  a, _:= json.Marshal(allTrucks)
+  w.Write(a)
 }
 
 func DeleteFoodTruck(w http.ResponseWriter, r *http.Request) {
@@ -122,6 +122,15 @@ func DeleteFoodTruck(w http.ResponseWriter, r *http.Request) {
   }
 
   w.Write([]byte("Deleting food truck :( " + foodTruckId))
+
+  // hack
+  var newAllTrucks = []Truck{}
+  for i := 0; i < len(allTrucks); i++ {
+    if allTrucks[i].FoodTruckId != foodTruckId {
+      newAllTrucks = append(newAllTrucks, allTrucks[i])
+    }
+  }
+  allTrucks = newAllTrucks
 }
 
 func OpenFoodTruck(w http.ResponseWriter, r *http.Request) {
@@ -145,6 +154,15 @@ func OpenFoodTruck(w http.ResponseWriter, r *http.Request) {
     return
   }
 
+  // hack
+  for i := 0; i < len(allTrucks); i++ {
+    if allTrucks[i].FoodTruckId == foodTruckId {
+      allTrucks[i].IsOpen = true
+      allTrucks[i].Latitude = latitude
+      allTrucks[i].Longitude = longitude
+    }
+  }
+
   w.Write([]byte(fmt.Sprintf("Opening food truck %s at %s,%s ", foodTruckId, latitude, longitude)))
 }
 
@@ -159,6 +177,13 @@ func CloseFoodTruck(w http.ResponseWriter, r *http.Request) {
   if (err != nil){
     fmt.Println(err)
     return
+  }
+
+  // hack
+  for i := 0; i < len(allTrucks); i++ {
+    if allTrucks[i].FoodTruckId == foodTruckId {
+      allTrucks[i].IsOpen = false
+    }
   }
 
   w.Write([]byte("Closing food truck :( " + foodTruckId))
@@ -197,6 +222,14 @@ func PostFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
   if (err != nil){
     fmt.Println(err)
     return
+  }
+
+  // hack
+  for i := 0; i < len(allTrucks); i++ {
+    if allTrucks[i].FoodTruckId != foodTruckId {
+      allTrucks[i].Latitude = latitude
+      allTrucks[i].Longitude = longitude
+    }
   }
 
   w.Write([]byte(fmt.Sprintf("Posting food truck location! %s at %s, %s",
