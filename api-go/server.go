@@ -30,8 +30,13 @@ func main() {
   http.ListenAndServe(":9001", mx)
 }
 
-func GetNearbyFoodTrucks(w http.ResponseWriter, r *http.Request) {
+func WriteAllowOriginHeader(w http.ResponseWriter) {
   w.Header().Set("Content-Type", "application/json; charset=utf=8")
+  w.Header().Add("Access-Control-Allow-Origin", "http://whatsontheme.nu")
+}
+
+func GetNearbyFoodTrucks(w http.ResponseWriter, r *http.Request) {
+  WriteAllowOriginHeader(w)
 
   queryParameters := r.URL.Query()
   latitude, err2 := strconv.ParseFloat(queryParameters.Get("lat"), 64)
@@ -57,7 +62,7 @@ func GetNearbyFoodTrucks(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
-  w.Header().Set("Content-Type", "application/json; charset=utf=8")
+  WriteAllowOriginHeader(w)
   trucks := []Truck{}
   err := db.Select(&trucks, "SELECT id, name, lat, lng, is_open FROM FoodTrucks")
   fmt.Println(trucks)
@@ -190,7 +195,7 @@ func CloseFoodTruck(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
-  w.Header().Set("Content-Type", "application/json; charset=utf=8")
+  WriteAllowOriginHeader(w)
   foodTruckId := mux.Vars(r)["id"]
 
   var truck Truck
@@ -237,7 +242,7 @@ func PostFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetTestFoodTrucks(w http.ResponseWriter, r *http.Request) {
-  w.Header().Set("Content-Type", "application/json; charset=utf=8")
+  WriteAllowOriginHeader(w)
   a, _:= json.Marshal(allTrucks)
   w.Write(a)
   return
