@@ -19,8 +19,8 @@ func main() {
   mx.HandleFunc("/api/trucks/location/{id}", PostFoodTruckLocation).Methods("POST")
   mx.HandleFunc("/api/trucks/location", GetFoodTrucks).Methods("GET")
 
-  fmt.Printf("Serving on port %i", 8080)
-  http.ListenAndServe(":8080", mx)
+  fmt.Printf("Serving on port %i", 9001)
+  http.ListenAndServe(":9001", mx)
 }
 
 func SayHelloWorld(w http.ResponseWriter, r *http.Request) {
@@ -52,8 +52,12 @@ func GetFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
 }
 
 func PostFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
+  queryParameters := r.URL.Query()
+  latitude := queryParameters.Get("lat")
+  longitude := queryParameters.Get("lon")
   foodTruckId := mux.Vars(r)["id"]
-  w.Write([]byte("Posting food truck location! " + foodTruckId))
+  w.Write([]byte(fmt.Sprintf("Posting food truck location! %s at %s, %s",
+                              foodTruckId, latitude, longitude)))
 }
 
 func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
