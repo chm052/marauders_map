@@ -1,8 +1,8 @@
 package main
 
 type Truck struct {
-  FoodTruckId int
+  FoodTruckId int `db:"id"`
   Name string
-  Latitude string
-  Longitude string
+  Latitude float64 `db:"lat"`
+  Longitude float64 `db:"lng"`
 }
