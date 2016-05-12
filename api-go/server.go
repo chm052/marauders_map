@@ -12,7 +12,7 @@ import (
 // var truck2 = Truck{2, "Beat Kitchen", 2, -41.287022, 174.778667, ""}
 // var truck3 = Truck{3, "Nanny's Food Truck", 3, -41.290425, 174.779272, ""}
 // var allTrucks = []Truck{truck1, truck2, truck3}
-// var db = initDb()
+var db = initDb()
 
 func main() {
   mx := mux.NewRouter()
