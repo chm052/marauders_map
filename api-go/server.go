@@ -26,14 +26,14 @@ func main() {
   mx.HandleFunc("/api/trucks/location/all", GetFoodTrucks).Methods("GET")
   mx.HandleFunc("/api/trucks/test", GetTestFoodTrucks).Methods("GET")
 
-  fmt.Printf("Serving on port %i", 9001)
+  fmt.Printf("Serving on port 9001")
   http.ListenAndServe(":9001", mx)
 }
 
 func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Content-Type", "application/json; charset=utf=8")
   trucks := []Truck{}
-  err := db.Select(&trucks, "SELECT id, name, lat, lng FROM FoodTrucks")
+  err := db.Select(&trucks, "SELECT id, name, owner_id, lat, lng, url FROM FoodTrucks")
   fmt.Println(trucks)
   if (err != nil){
     fmt.Println(err)
@@ -60,10 +60,10 @@ func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s %s", err1, err2, err3)))
     return
   }
-  addTruck := `INSERT INTO foodtrucks (id, name, owner_id, lat, lng) VALUES ($1, $2, $3, $4, $5)`
+  addTruck := `INSERT INTO foodtrucks (id, name, owner_id, lat, lng, url) VALUES ($1, $2, $3, $4, $5, $6)`
   var truckId = len(allTrucks)+1
   tx, err := db.Begin()
-  _, err = tx.Exec(addTruck, truckId, name, int(ownerid), latitude, longitude)
+  _, err = tx.Exec(addTruck, truckId, name, int(ownerid), latitude, longitude, url)
   err = tx.Commit()
 
   if (err != nil){
