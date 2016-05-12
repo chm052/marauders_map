@@ -1,28 +1,5 @@
 'use strict';
  
-/**
- * Creates a marker to put on the map to represent a food truck
- * 
- * @private
- * @param {object} map - The instance of the map you want to add the marker to
- * @param {object} data
- * @param {string} data.Latitude
- * @param {string} data.Longitude
- * @param {string} data.Name - The name of the food truck
- */ 
-function createMarker(map, data) {
-  
-  var marker = new google.maps.Marker({
-    position: {
-      lat: data.Latitude,
-      lng: data.Longitude
-    },
-    map: map,
-    title: data.Name
-  });
-}
- 
- 
 function initMap() {
   // Specify features and elements to define styles.
   var styleArray = avocado;
@@ -49,6 +26,56 @@ function initMap() {
       console.log(response);
      }
   });
+
+  // The sinlge instance of the info window. 
+  // Don't create any other instances of this as
+  // we only ever want one window open at a time
+  var infoWindow = new google.maps.InfoWindow({});
+  
+  /**
+   * Creates a marker to put on the map to represent a food truck
+   * 
+   * @param {object} map - The instance of the map you want to add the marker to
+   * @param {object} data
+   * @param {string} data.Latitude
+   * @param {string} data.Longitude
+   * @param {string} data.Name - The name of the food truck
+   */ 
+  function createMarker(map, data) {
+    
+    var marker = new google.maps.Marker({
+      position: {
+        lat: data.Latitude,
+        lng: data.Longitude
+      },
+      map: map,
+      title: data.Name
+    });
+
+    marker.addListener('click', function() {
+      updateInfoWindow(map, data, infoWindow);
+      infoWindow.open(map, marker);
+    });
+  }
+
+  /**
+   * Updates the contents of the info window
+   *  
+   * @param {object} map - The instance of the map you want to add the marker to
+   * @param {object} data
+   * @param {string} data.Name - The name of the food truck
+   * @param {object} infoWindow - The info window object
+   */
+  function updateInfoWindow(map, data, infoWindow) {
+    var contentString = '<div id="infowindow">' +
+      '<h1 id="firstHeading" class="firstHeading">' + data.Name + '</h1>' +
+      '<div id="bodyContent">' +
+      '<p>menu displayed here</p>' +
+      '</div>' +
+      '</div>';
+      
+      infoWindow.setContent(contentString);
+  }
 }
  
 
