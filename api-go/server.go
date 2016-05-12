@@ -10,17 +10,12 @@ import (
 func main() {
   mx := mux.NewRouter()
 
-  mx.HandleFunc("/", SayHelloWorld)
-  mx.HandleFunc("/trucks", GetFoodTrucks)
-  mx.HandleFunc("/truck/open", OpenFoodTruck)
-  mx.HandleFunc("/truck/close", CloseFoodTruck)
+  mx.HandleFunc("/api/trucks", GetFoodTrucks)
+  mx.HandleFunc("/api/truck/open", OpenFoodTruck)
+  mx.HandleFunc("/api/truck/close", CloseFoodTruck)
 
-  fmt.Printf("Serving on port %i", 8080)
-  http.ListenAndServe(":8080", mx)
-}
-
-func SayHelloWorld(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("Hello, World!"))
+  fmt.Printf("Serving on port 9001")
+  http.ListenAndServe(":9001", mx)
 }
 
 func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
