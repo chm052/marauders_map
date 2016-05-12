@@ -55,7 +55,21 @@ table {
 
 
 /* BASE */
+h1 {
+	text-align: center;
+	margin: 20px 10px;
+	font-size: 35px;
+}
 
+h2 {
+	text-align: center;	
+	margin: 20px 10px;
+	font-size: 20px;
+}
+
+body {
+	font-family: helvetica, sans-serif;
+}
 
 /* MAIN */
 .map {
@@ -64,4 +78,31 @@ table {
 	margin: 1em auto;
 	height: 70%;
 	width: 80%;
+}
+
+.button {
+    background-color: #E6E6E6;
+    text-decoration: none;
+    border-radius: 2px;
+	display: inline-block;
+    zoom: 1;
+    line-height: normal;
+    white-space: nowrap;
+    vertical-align: middle;
+    text-align: center;
+    cursor: pointer;
+    -webkit-user-drag: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+	background-color: #0078e7;
+    color: #fff;
+	font-family: inherit;
+    font-size: 100%;
+    padding: .5em 1em;
+    border: 1px solid #999;
 }

@@ -1,4 +1,45 @@
 'use strict';
+
+var xero = 'lat=-41.2903209&lon=174.7772573';
+var beehive = 'lat=-41.2778209&lon=174.7743723';
+var nearbyEndpoint = 'http://tellme.whatsontheme.nu/api/trucks/location/nearby?';
+
+var nearXeroBtn = document.getElementById('nearXero');
+var nearBeehiveBtn = document.getElementById('nearBeehive');
+
+nearBeehiveBtn.addEventListener('click', function () {
+  console.log('beehive');
+
+  uxhr(nearbyEndpoint + beehive, {}, {
+    method: 'GET',
+    success: function (response) {
+       var data = JSON.parse(response);
+       console.log(data);
+      // data.forEach(v => createMarker(map, v));
+     },
+    error: function (response) {
+      console.log(response);
+     }
+  });
+});
+
+nearXeroBtn.addEventListener('click', function () {
+  console.log('xero');
+  
+  uxhr(nearbyEndpoint + xero, {}, {
+    method: 'GET',
+    success: function (response) {
+       var data = JSON.parse(response);
+       console.log(data);
+      // data.forEach(v => createMarker(map, v));
+     },
+    error: function (response) {
+      console.log(response);
+     }
+  });
+});
+
+
  
 function initMap() {
   // Specify features and elements to define styles.
@@ -15,9 +56,6 @@ function initMap() {
   
   uxhr('http://tellme.whatsontheme.nu/api/trucks/location/all', {}, {
     method: 'GET',
-    headers: {
-      
-    },
     success: function (response) {
        var data = JSON.parse(response);
       data.forEach(v => createMarker(map, v));
