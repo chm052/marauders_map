@@ -101,11 +101,13 @@ func DeleteFoodTruck(w http.ResponseWriter, r *http.Request) {
 
 func OpenFoodTruck(w http.ResponseWriter, r *http.Request) {
   foodTruckId := mux.Vars(r)["id"]
+  // TODO Update the Food Truck status/open timestamp
   w.Write([]byte("Opening food truck! " + foodTruckId))
 }
 
 func CloseFoodTruck(w http.ResponseWriter, r *http.Request) {
   foodTruckId := mux.Vars(r)["id"]
+  // TODO Update the Food Truck status/open timestamp
   w.Write([]byte("Closing food truck :( " + foodTruckId))
 }
 
@@ -129,6 +131,9 @@ func PostFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
   latitude := queryParameters.Get("lat")
   longitude := queryParameters.Get("lon")
   foodTruckId := mux.Vars(r)["id"]
+
+  // TODO Update the Food Truck status/open timestamp
+  
   w.Write([]byte(fmt.Sprintf("Posting food truck location! %s at %s, %s",
                               foodTruckId, latitude, longitude)))
 }
