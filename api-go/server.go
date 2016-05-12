@@ -8,10 +8,10 @@ import (
   "strconv"
 )
 
-// var truck1  = Truck{1, "Greek Food Truck", 1, -41.292489, 174.778656, ""}
-// var truck2 = Truck{2, "Beat Kitchen", 2, -41.287022, 174.778667, ""}
-// var truck3 = Truck{3, "Nanny's Food Truck", 3, -41.290425, 174.779272, ""}
-// var allTrucks = []Truck{truck1, truck2, truck3}
+var truck1  = Truck{1, "Greek Food Truck", -41.292489, 174.778656}
+var truck2 = Truck{2, "Beat Kitchen", -41.287022, 174.778667}
+var truck3 = Truck{3, "Nanny's Food Truck", -41.290425, 174.779272}
+var allTrucks = []Truck{truck1, truck2, truck3}
 var db = initDb()
 
 func main() {
@@ -21,9 +21,9 @@ func main() {
   mx.HandleFunc("/api/trucks/delete/{id}", DeleteFoodTruck).Methods("DELETE")
   mx.HandleFunc("/api/trucks/open/{id}", OpenFoodTruck).Methods("POST")
   mx.HandleFunc("/api/trucks/close/{id}", CloseFoodTruck).Methods("POST")
+  mx.HandleFunc("/api/trucks/location/all", GetFoodTrucks).Methods("GET")
   mx.HandleFunc("/api/trucks/location/{id}", GetFoodTruckLocation).Methods("GET")
   mx.HandleFunc("/api/trucks/location/{id}", PostFoodTruckLocation).Methods("POST")
-  mx.HandleFunc("/api/trucks/location/all", GetFoodTrucks).Methods("GET")
   mx.HandleFunc("/api/trucks/test", GetTestFoodTrucks).Methods("GET")
 
   fmt.Printf("Serving on port 9001")
@@ -33,7 +33,7 @@ func main() {
 func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Content-Type", "application/json; charset=utf=8")
   trucks := []Truck{}
-  err := db.Select(&trucks, "SELECT id, name, owner_id, lat, lng, url FROM FoodTrucks")
+  err := db.Select(&trucks, "SELECT id, name, lat, lng FROM FoodTrucks")
   fmt.Println(trucks)
   if (err != nil){
     fmt.Println(err)
@@ -105,6 +105,11 @@ func OpenFoodTruck(w http.ResponseWriter, r *http.Request) {
   latitude, err2 := strconv.ParseFloat(queryParameters.Get("lat"), 64)
   longitude, err3 := strconv.ParseFloat(queryParameters.Get("lon"), 64)
 
+  if err2 != nil || err3 != nil {
+    w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s", err2, err3)))
+    return
+  }
+
   // TODO Update the Food Truck status/open timestamp
 
   w.Write([]byte(fmt.Sprintf("Opening food truck %s at %s,%s ", foodTruckId, latitude, longitude)))
@@ -136,6 +141,11 @@ func PostFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
   foodTruckId := mux.Vars(r)["id"]
   latitude, err2 := strconv.ParseFloat(queryParameters.Get("lat"), 64)
   longitude, err3 := strconv.ParseFloat(queryParameters.Get("lon"), 64)
+
+  if err2 != nil || err3 != nil {
+    w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s", err2, err3)))
+    return
+  }
 
   // TODO Update the Food Truck status/open timestamp
 
