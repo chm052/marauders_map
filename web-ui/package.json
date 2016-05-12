@@ -15,5 +15,8 @@
   "bugs": {
     "url": "https://github.com/chm052/marauders_map/issues"
   },
-  "homepage": "https://github.com/chm052/marauders_map#readme"
+  "homepage": "https://github.com/chm052/marauders_map#readme",
+  "dependencies": {
+    "uxhr": "^1.0.6"
+  }
 }
