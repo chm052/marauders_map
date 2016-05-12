@@ -5,11 +5,12 @@ import (
   "github.com/gorilla/mux"
   "net/http"
   "encoding/json"
+  "strconv"
 )
 
-var truck1 = Truck{1, "Greek Food Truck", -41.292489, 174.778656}
-var truck2 = Truck{2, "Beat Kitchen", -41.287022, 174.778667}
-var truck3 = Truck{3, "Nanny's Food Truck", -41.290425, 174.779272}
+var truck1  = Truck{1, "Greek Food Truck", 1, -41.292489, 174.778656, ""}
+var truck2 = Truck{2, "Beat Kitchen", 2, -41.287022, 174.778667, ""}
+var truck3 = Truck{3, "Nanny's Food Truck", 3, -41.290425, 174.779272, ""}
 var allTrucks = []Truck{truck1, truck2, truck3}
 var db = initDb()
 
@@ -48,7 +49,32 @@ func SayHelloWorld(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("Creating food truck!"))
+  w.Write([]byte("Creating food truck!\n"))
+
+  queryParameters := r.URL.Query()
+
+  // surely there's a better way to do this
+  name := queryParameters.Get("name")
+  ownerid, err1 := strconv.Atoi(queryParameters.Get("ownerid"))
+  latitude, err2 := strconv.ParseFloat(queryParameters.Get("lat"), 64)
+  longitude, err3 := strconv.ParseFloat(queryParameters.Get("lon"), 64)
+  url := queryParameters.Get("url")
+
+  if err1 != nil || err2 != nil || err3 != nil {
+    w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s %s", err1, err2, err3)))
+    return
+  }
+
+  newTruck := Truck{FoodTruckId: len(allTrucks)+1,
+                   Name: name,
+                   OwnerId: int(ownerid),
+                   Latitude: latitude,
+                   Longitude: longitude,
+                   Url: url}
+
+  allTrucks = append(allTrucks, newTruck)
+  a, _:= json.Marshal(allTrucks)
+  w.Write(a)
 }
 
 func DeleteFoodTruck(w http.ResponseWriter, r *http.Request) {
