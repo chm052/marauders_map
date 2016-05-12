@@ -22,6 +22,8 @@ func main() {
   mx.HandleFunc("/api/trucks/open/{id}", OpenFoodTruck).Methods("POST")
   mx.HandleFunc("/api/trucks/close/{id}", CloseFoodTruck).Methods("POST")
   mx.HandleFunc("/api/trucks/location/all", GetFoodTrucks).Methods("GET")
+
+  mx.HandleFunc("/api/trucks/location/nearby", GetNearbyFoodTrucks).Methods("GET")
   mx.HandleFunc("/api/trucks/location/{id}", GetFoodTruckLocation).Methods("GET")
   mx.HandleFunc("/api/trucks/location/{id}", PostFoodTruckLocation).Methods("POST")
   mx.HandleFunc("/api/trucks/test", GetTestFoodTrucks).Methods("GET")
@@ -39,18 +41,11 @@ func GetNearbyFoodTrucks(w http.ResponseWriter, r *http.Request) {
   WriteAllowOriginHeader(w)
 
   queryParameters := r.URL.Query()
-  latitude, err2 := strconv.ParseFloat(queryParameters.Get("lat"), 64)
-  longitude, err3 := strconv.ParseFloat(queryParameters.Get("lon"), 64)
-
-
-  if err2 != nil || err3 != nil {
-    w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s", err2, err3)))
-    return
-  }
+  latitude := queryParameters.Get("lat")
+  longitude := queryParameters.Get("lon")
 
   trucks := []Truck{}
-  // TODO needs id, name etc?
-  err := db.Select(&trucks, "SELECT id, name, lat, lng, url FROM FoodTrucks WHERE ST_DWithin(geom,  ST_GeomFromText('POINT($1 $2)', 4326),1000,false)", longitude,latitude)
+  err := db.Select(&trucks, `SELECT id, name, lat, lng, is_open FROM FoodTrucks WHERE ST_DWithin(geom,  ST_GeomFromText('POINT(`+ longitude + ` ` + latitude + `)', 4326),1000,false)`)
   fmt.Println(trucks)
   if (err != nil){
     fmt.Println(err)
