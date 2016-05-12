@@ -7,15 +7,12 @@ import (
   "encoding/json"
 )
 
-var truck1 = Truck{1, "Greek Food Truck", "-41.292489", "174.778656"}
+var truck1  = Truck{1, "Greek Food Truck", "-41.292489", "174.778656"}
 var truck2 = Truck{2, "Beat Kitchen", "-41.287022", "174.778667"}
 var truck3 = Truck{3, "Nanny's Food Truck", "-41.290425", "174.779272"}
 var allTrucks = []Truck{truck1, truck2, truck3}
 
 func main() {
-
-
-
   mx := mux.NewRouter()
 
   mx.HandleFunc("/", SayHelloWorld)
@@ -36,7 +33,11 @@ func SayHelloWorld(w http.ResponseWriter, r *http.Request) {
 }
 
 func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
+  allTrucks = append(allTrucks, Truck{FoodTruckId: len(allTrucks)+2,
+                                      Name: "new food truck!"})
   w.Write([]byte("Creating food truck!"))
+  a, _:= json.Marshal(allTrucks)
+  w.Write(a)
 }
 
 func DeleteFoodTruck(w http.ResponseWriter, r *http.Request) {
