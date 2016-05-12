@@ -12,9 +12,11 @@ import com.android.volley.Response;
 public class PostLocationListener implements View.OnClickListener
 {
     private LocationFinder locationFinder;
+    private MaraudersApiClient maraudersApiClient;
 
-    public PostLocationListener(LocationFinder locationFinder) {
+    public PostLocationListener(LocationFinder locationFinder, MaraudersApiClient maraudersApiClient) {
         this.locationFinder = locationFinder;
+        this.maraudersApiClient = maraudersApiClient;
     }
 
     @Override

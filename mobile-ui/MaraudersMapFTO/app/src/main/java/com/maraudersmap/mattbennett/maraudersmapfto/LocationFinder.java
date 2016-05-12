@@ -21,8 +21,6 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
     private Activity context;
     private boolean connected = false;
 
-    final int REQUEST_LOCATION_CODE = 420;
-
     public LocationFinder(Activity context) {
         this.context = context;
 
