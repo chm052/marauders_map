@@ -23,7 +23,7 @@ func main() {
   mx.HandleFunc("/api/trucks/close/{id}", CloseFoodTruck).Methods("POST")
   mx.HandleFunc("/api/trucks/location/{id}", GetFoodTruckLocation).Methods("GET")
   mx.HandleFunc("/api/trucks/location/{id}", PostFoodTruckLocation).Methods("POST")
-  mx.HandleFunc("/api/trucks/location", GetFoodTrucks).Methods("GET")
+  mx.HandleFunc("/api/trucks/location/all", GetFoodTrucks).Methods("GET")
   mx.HandleFunc("/api/trucks/test", GetTestFoodTrucks).Methods("GET")
 
   fmt.Printf("Serving on port %i", 9001)
@@ -100,9 +100,14 @@ func DeleteFoodTruck(w http.ResponseWriter, r *http.Request) {
 }
 
 func OpenFoodTruck(w http.ResponseWriter, r *http.Request) {
+  queryParameters := r.URL.Query()
   foodTruckId := mux.Vars(r)["id"]
+  latitude, err2 := strconv.ParseFloat(queryParameters.Get("lat"), 64)
+  longitude, err3 := strconv.ParseFloat(queryParameters.Get("lon"), 64)
+
   // TODO Update the Food Truck status/open timestamp
-  w.Write([]byte("Opening food truck! " + foodTruckId))
+
+  w.Write([]byte(fmt.Sprintf("Opening food truck %s at %s,%s ", foodTruckId, latitude, longitude)))
 }
 
 func CloseFoodTruck(w http.ResponseWriter, r *http.Request) {
@@ -128,12 +133,12 @@ func GetFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
 
 func PostFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
   queryParameters := r.URL.Query()
-  latitude := queryParameters.Get("lat")
-  longitude := queryParameters.Get("lon")
   foodTruckId := mux.Vars(r)["id"]
+  latitude, err2 := strconv.ParseFloat(queryParameters.Get("lat"), 64)
+  longitude, err3 := strconv.ParseFloat(queryParameters.Get("lon"), 64)
 
   // TODO Update the Food Truck status/open timestamp
-  
+
   w.Write([]byte(fmt.Sprintf("Posting food truck location! %s at %s, %s",
                               foodTruckId, latitude, longitude)))
 }
