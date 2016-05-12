@@ -10,12 +10,50 @@ import (
 func main() {
   mx := mux.NewRouter()
 
-  mx.HandleFunc("/api/trucks", GetFoodTrucks)
-  mx.HandleFunc("/api/truck/open", OpenFoodTruck)
-  mx.HandleFunc("/api/truck/close", CloseFoodTruck)
+  mx.HandleFunc("/", SayHelloWorld)
+  mx.HandleFunc("/api/trucks/create", CreateFoodTruck).Methods("POST")
+  mx.HandleFunc("/api/trucks/delete/{id}", DeleteFoodTruck).Methods("DELETE")
+  mx.HandleFunc("/api/trucks/open/{id}", OpenFoodTruck).Methods("POST")
+  mx.HandleFunc("/api/trucks/close/{id}", CloseFoodTruck).Methods("POST")
+  mx.HandleFunc("/api/trucks/location/{id}", GetFoodTruckLocation).Methods("GET")
+  mx.HandleFunc("/api/trucks/location/{id}", PostFoodTruckLocation).Methods("POST")
+  mx.HandleFunc("/api/trucks/location", GetFoodTrucks).Methods("GET")
 
-  fmt.Printf("Serving on port 9001")
-  http.ListenAndServe(":9001", mx)
+  fmt.Printf("Serving on port %i", 8080)
+  http.ListenAndServe(":8080", mx)
+}
+
+func SayHelloWorld(w http.ResponseWriter, r *http.Request) {
+  w.Write([]byte("Hello, World!"))
+}
+
+func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
+  w.Write([]byte("Creating food truck!"))
+}
+
+func DeleteFoodTruck(w http.ResponseWriter, r *http.Request) {
+  foodTruckId := mux.Vars(r)["id"]
+  w.Write([]byte("Deleting food truck :( " + foodTruckId))
+}
+
+func OpenFoodTruck(w http.ResponseWriter, r *http.Request) {
+  foodTruckId := mux.Vars(r)["id"]
+  w.Write([]byte("Opening food truck! " + foodTruckId))
+}
+
+func CloseFoodTruck(w http.ResponseWriter, r *http.Request) {
+  foodTruckId := mux.Vars(r)["id"]
+  w.Write([]byte("Closing food truck :( " + foodTruckId))
+}
+
+func GetFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
+  foodTruckId := mux.Vars(r)["id"]
+  w.Write([]byte("Here is food truck location! " + foodTruckId))
+}
+
+func PostFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
+  foodTruckId := mux.Vars(r)["id"]
+  w.Write([]byte("Posting food truck location! " + foodTruckId))
 }
 
 func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
@@ -29,11 +67,4 @@ func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
   a, _:= json.Marshal(myItems)
   w.Write(a)
   return
-}
-func OpenFoodTruck(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("Opening food truck!"))
-}
-
-func CloseFoodTruck(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("Closing food truck :("))
 }
