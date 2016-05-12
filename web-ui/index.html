@@ -7,13 +7,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" type="text/css" href="./css/styles.css">
 </head>
+
 <body>
   <main>
       <h1>I solemnly swear that I am up for food!</h1>
       <button class="start-broadcast-button" role="button">Broadcast my location</button>
       <button class="stop-breadcast-button" role="button">Stop Broadcasting</button>
   </main>
+  
+  <div id="map"" class="map"></div>
 
-  <script src="./js/index.js"></script>
+  <script src="scripts/main.js"></script>
+  <script src="https://maps.googleapis.com/maps/api/js?v=3&key=AIzaSyAmMBYAfTFcQJEjrK7XYZ0IjohdaacguYI&callback=initMap" async defer></script>
+
 </body>
 </html>
