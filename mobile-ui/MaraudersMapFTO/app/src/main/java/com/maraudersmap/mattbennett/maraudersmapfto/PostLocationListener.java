@@ -4,6 +4,8 @@ import android.location.Location;
 import android.support.design.widget.Snackbar;
 import android.view.View;
 
+import com.android.volley.Response;
+
 /**
  * Created by matt.bennett on 12/05/2016.
  */
@@ -16,10 +18,18 @@ public class PostLocationListener implements View.OnClickListener
     }
 
     @Override
-    public void onClick(View view) {
+    public void onClick(final View view) {
         try {
             Location loc = locationFinder.myLocation();
-            snackbar(view, String.format("Found your location: <%s>", locationText(loc)));
+            ClassLogger.debug(this, "Sending location to MM");
+            //snackbar(view, String.format("Found your location: <%s>", locationText(loc)));
+            maraudersApiClient.postLocationToMarauders(loc, new Response.Listener<String>() {
+                @Override
+                public void onResponse(String response) {
+                    ClassLogger.debug(this, "It worked! Gonna pop up a snacky bar");
+                    snackbar(view, response);
+                }
+            });
         } catch (Exception e) {
             snackbar(view, e.getMessage());
         }
