@@ -17,7 +17,6 @@ var db = initDb()
 func main() {
   mx := mux.NewRouter()
 
-  mx.HandleFunc("/", SayHelloWorld)
   mx.HandleFunc("/api/trucks/create", CreateFoodTruck).Methods("POST")
   mx.HandleFunc("/api/trucks/delete/{id}", DeleteFoodTruck).Methods("DELETE")
   mx.HandleFunc("/api/trucks/open/{id}", OpenFoodTruck).Methods("POST")
@@ -32,6 +31,7 @@ func main() {
 }
 
 func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json; charset=utf=8")
   trucks := []Truck{}
   err := db.Select(&trucks, "SELECT id, name, lat, lng FROM FoodTrucks")
   fmt.Println(trucks)
@@ -42,10 +42,6 @@ func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
   a, _:= json.Marshal(trucks)
   w.Write(a)
   return
-}
-
-func SayHelloWorld(w http.ResponseWriter, r *http.Request) {
-  w.Write([]byte("Hello, World!"))
 }
 
 func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
@@ -64,7 +60,16 @@ func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s %s", err1, err2, err3)))
     return
   }
+  addTruck := `INSERT INTO foodtrucks (id, name, owner_id, lat, lng) VALUES ($1, $2, $3, $4, $5)`
+  var truckId = len(allTrucks)+1
+  tx, err := db.Begin()
+  _, err = tx.Exec(addTruck, truckId, name, int(ownerid), latitude, longitude)
+  err = tx.Commit()
 
+  if (err != nil){
+    fmt.Println(err)
+    return
+  }
   newTruck := Truck{FoodTruckId: len(allTrucks)+1,
                    Name: name,
                    OwnerId: int(ownerid),
@@ -79,6 +84,18 @@ func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
 
 func DeleteFoodTruck(w http.ResponseWriter, r *http.Request) {
   foodTruckId := mux.Vars(r)["id"]
+
+  deleteTruck := `DELETE FROM foodtrucks WHERE id = $1`
+
+  tx, err := db.Begin()
+  _, err = tx.Exec(deleteTruck, foodTruckId)
+  err = tx.Commit()
+
+  if (err != nil){
+    fmt.Println(err)
+    return
+  }
+
   w.Write([]byte("Deleting food truck :( " + foodTruckId))
 }
 
@@ -93,8 +110,18 @@ func CloseFoodTruck(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
+  w.Header().Set("Content-Type", "application/json; charset=utf=8")
   foodTruckId := mux.Vars(r)["id"]
-  w.Write([]byte("Here is food truck location! " + foodTruckId))
+
+  var truck Truck
+  err := db.QueryRowx("SELECT id, name, lat, lng FROM FoodTrucks WHERE id = $1", foodTruckId).StructScan(&truck)
+  fmt.Println("Here is food truck location! " + foodTruckId)
+  if (err != nil){
+    fmt.Println(err)
+    return
+  }
+  a, _:= json.Marshal(truck)
+  w.Write(a)
 }
 
 func PostFoodTruckLocation(w http.ResponseWriter, r *http.Request) {
