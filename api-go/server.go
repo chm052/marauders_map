@@ -76,7 +76,7 @@ func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
     w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s %s", err1, err2, err3)))
     return
   }
-  addTruck := `INSERT INTO foodtrucks (id, name, owner_id, lat, lng, url) VALUES ($1, $2, $3, $4, $5, $6)`
+  addTruck := `INSERT INTO foodtrucks (id, name, owner_id, lat, lng, url, geom) VALUES ($1, $2, $3, $4, $5, $6,ST_GeomFromText('POINT($6 $5)', 4326))`
   var truckId = len(allTrucks)+1
   tx, err := db.Begin()
   _, err = tx.Exec(addTruck, truckId, name, int(ownerid), latitude, longitude, url)
