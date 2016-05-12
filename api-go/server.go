@@ -32,10 +32,19 @@ func main() {
 
 func GetNearbyFoodTrucks(w http.ResponseWriter, r *http.Request) {
   w.Header().Set("Content-Type", "application/json; charset=utf=8")
+
+  queryParameters := r.URL.Query()
   latitude, err2 := strconv.ParseFloat(queryParameters.Get("lat"), 64)
   longitude, err3 := strconv.ParseFloat(queryParameters.Get("lon"), 64)
+
+
+  if err2 != nil || err3 != nil {
+    w.Write([]byte(fmt.Sprintf("BAD INPUT :( %s %s", err2, err3)))
+    return
+  }
+
   trucks := []Truck{}
-  err := db.Queryx("SELECT id, name, owner_id, lat, lng, url FROM FoodTrucks WHERE ST_DWithin(geom,  ST_GeomFromText('POINT($1 $2)', 4326),1000,false)", longitude,latitude).StructScan(&truck)
+  err := db.Select(&trucks, "SELECT id, name, owner_id, lat, lng, url FROM FoodTrucks WHERE ST_DWithin(geom,  ST_GeomFromText('POINT($1 $2)', 4326),1000,false)", longitude,latitude)
   fmt.Println(trucks)
   if (err != nil){
     fmt.Println(err)
