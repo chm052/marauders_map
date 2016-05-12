@@ -62,7 +62,7 @@ public class PostActivity extends AppCompatActivity {
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         Log.d("PostActivity", "doing the thiiiiiing: permission request came back");
         switch (requestCode) {
-            case 0: {
+            case RequestCode.LOCATION: {
                 // If request is cancelled, the result arrays are empty.
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("PostActivity", "doing the thiiiiiing: permission request came back AND IT'S GOOD!");
