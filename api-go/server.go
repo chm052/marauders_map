@@ -8,11 +8,11 @@ import (
   "strconv"
 )
 
-var truck1  = Truck{1, "Greek Food Truck", 1, -41.292489, 174.778656, ""}
-var truck2 = Truck{2, "Beat Kitchen", 2, -41.287022, 174.778667, ""}
-var truck3 = Truck{3, "Nanny's Food Truck", 3, -41.290425, 174.779272, ""}
-var allTrucks = []Truck{truck1, truck2, truck3}
-var db = initDb()
+// var truck1  = Truck{1, "Greek Food Truck", 1, -41.292489, 174.778656, ""}
+// var truck2 = Truck{2, "Beat Kitchen", 2, -41.287022, 174.778667, ""}
+// var truck3 = Truck{3, "Nanny's Food Truck", 3, -41.290425, 174.779272, ""}
+// var allTrucks = []Truck{truck1, truck2, truck3}
+// var db = initDb()
 
 func main() {
   mx := mux.NewRouter()
@@ -70,16 +70,16 @@ func CreateFoodTruck(w http.ResponseWriter, r *http.Request) {
     fmt.Println(err)
     return
   }
-  newTruck := Truck{FoodTruckId: len(allTrucks)+1,
-                   Name: name,
-                   OwnerId: int(ownerid),
-                   Latitude: latitude,
-                   Longitude: longitude,
-                   Url: url}
-
-  allTrucks = append(allTrucks, newTruck)
-  a, _:= json.Marshal(allTrucks)
-  w.Write(a)
+  // newTruck := Truck{FoodTruckId: len(allTrucks)+1,
+  //                  Name: name,
+  //                  OwnerId: int(ownerid),
+  //                  Latitude: latitude,
+  //                  Longitude: longitude,
+  //                  Url: url}
+  //
+  // allTrucks = append(allTrucks, newTruck)
+  // a, _:= json.Marshal(allTrucks)
+  // w.Write(a)
 }
 
 func DeleteFoodTruck(w http.ResponseWriter, r *http.Request) {
