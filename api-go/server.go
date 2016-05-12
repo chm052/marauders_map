@@ -45,7 +45,7 @@ func GetNearbyFoodTrucks(w http.ResponseWriter, r *http.Request) {
   longitude := queryParameters.Get("lon")
 
   trucks := []Truck{}
-  err := db.Select(&trucks, `SELECT id, name, lat, lng, is_open FROM FoodTrucks WHERE ST_DWithin(geom,  ST_GeomFromText('POINT(`+ longitude + ` ` + latitude + `)', 4326),1000,false)`)
+  err := db.Select(&trucks, `SELECT id, name, lat, lng, is_open FROM FoodTrucks WHERE is_open = true and ST_DWithin(geom,  ST_GeomFromText('POINT(`+ longitude + ` ` + latitude + `)', 4326),1000,false)`)
   fmt.Println(trucks)
   if (err != nil){
     fmt.Println(err)
@@ -59,7 +59,7 @@ func GetNearbyFoodTrucks(w http.ResponseWriter, r *http.Request) {
 func GetFoodTrucks(w http.ResponseWriter, r *http.Request) {
   WriteAllowOriginHeader(w)
   trucks := []Truck{}
-  err := db.Select(&trucks, "SELECT id, name, lat, lng, is_open FROM FoodTrucks")
+  err := db.Select(&trucks, "SELECT id, name, lat, lng, is_open FROM FoodTrucks WHERE is_open = true")
   fmt.Println(trucks)
   if (err != nil){
     fmt.Println(err)
