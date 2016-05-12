@@ -3,6 +3,8 @@ package main
 type Truck struct {
   FoodTruckId int
   Name string
-  Latitude string
-  Longitude string
+  OwnerId int
+  Latitude float64
+  Longitude float64
+  Url string
 }
