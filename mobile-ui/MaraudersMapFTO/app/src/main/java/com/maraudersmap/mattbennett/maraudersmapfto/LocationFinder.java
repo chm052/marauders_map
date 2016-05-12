@@ -43,9 +43,12 @@ public class LocationFinder implements GoogleApiClient.ConnectionCallbacks, Goog
                requestPermission(Manifest.permission.ACCESS_FINE_LOCATION);
             }
 
+            ClassLogger.debug(this, "Starting get location loop");
             while (currentLocation == null) {
                 currentLocation = LocationServices.FusedLocationApi.getLastLocation(this.apiClient);
+                ClassLogger.debug(this, "attempting to get location");
             }
+            ClassLogger.debug(this, String.format("finished get location loop with: %s <%s, %s>", currentLocation, currentLocation.getLatitude(), currentLocation.getLongitude()));
             return currentLocation;
         }
 

@@ -17,7 +17,7 @@ public class PostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         locationFinder = new LocationFinder(this);
-        maraudersApiClient = new MaraudersApiClient(getString(R.string.marauders_url), this);
+        maraudersApiClient = new MaraudersApiClient(getString(R.string.marauders_url));
 
         setContentView(R.layout.activity_post);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
